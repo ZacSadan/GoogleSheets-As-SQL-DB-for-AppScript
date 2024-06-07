@@ -26,8 +26,10 @@ rows = gsdb.query_fast("number",value)
 const details_for_updating_matched_rows = {};
      var date = new Date();
      details_for_updating_matched_rows.date_time = date ;
-     details_for_updating_matched_rows.string    = "str_updated"+ Math.floor(Math.random() * (100001));        
+     details_for_updating_matched_rows.string    = "str_updated"+ Math.floor(Math.random() * (100001));
+
 success = gsdb.update(details_for_updating_matched_rows,"where (number > 7000)");
+
 success = gsdb.update_fast("number",rand_value,"string","str_updated_by_update_fast");
 
 success = gsdb.truncate(); // remove all previous entries
