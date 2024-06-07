@@ -10,6 +10,7 @@ class gsDB
       this.sheet = this.spreadsheet.getSheetByName(sheetName);
       this.sheetName = sheetName;
       this.colNames = [];
+      this.cache = {}; // cache for fast queries
       
       // first line contains the table columns names
       for (var i = 1; i <= this.MAX_NUM_COLS; i++) 
@@ -54,6 +55,7 @@ class gsDB
               this.sheet.getRange(i,j).setValue("")
           }
       }
+      this.cache = {}; 
       return true;
     }
     //---------------------------------------------------------
@@ -67,6 +69,7 @@ class gsDB
           newValue = row[colName];          
           this.sheet.getRange(nextRowNum,i+1).setValue(newValue)
       }
+      this.cache = {}; 
       return true;
     }
     //---------------------------------------------------------
@@ -90,6 +93,24 @@ class gsDB
     //---------------------------------------------------------
     query_fast(field_name,field_value)
     {
+        if(this.cache != {} && this.cache[field_name] && this.cache[field_name] )
+        {          
+          //console.log(this.cache[field_name])
+          var inx = this.cache[field_name].indexOf(field_value)
+          if (inx == -1)
+          {
+            return null;     
+          }
+          var curRowArr = [];
+          for ( var j = 1 ; j <= this.colNames.length ; j ++)
+          {              
+              // sheet start from 1 and also there is header row ...
+              curRowArr.push(this.sheet.getRange(inx+2,j).getValue()); 
+          }     
+          //console.log("-- query_fast result from cache")
+          return curRowArr;          
+        }
+        //-------------
         var numOfRows = this.getNumOfActiveRows()
         var col_index = -1;
         for ( var i = 0 ; i < this.colNames.length ; i ++)
@@ -100,19 +121,27 @@ class gsDB
         if ( col_index == -1)
           return null;
 
+        this.cache[field_name] = [];
+
         for ( var i = 2 ; i <= numOfRows ; i ++)
-        {
-            if ( field_value == this.sheet.getRange(i,col_index).getValue() )
+        {   
+            var row_value = this.sheet.getRange(i,col_index).getValue()
+            this.cache[field_name].push(row_value); // we need to loop even if value was found for cache ...
+
+            if ( field_value == row_value  )
             {
               var curRowArr = [];
               for ( var j = 1 ; j <= this.colNames.length ; j ++)
               {              
                 curRowArr.push(this.sheet.getRange(i,j).getValue());
               }     
-              return curRowArr;
+              //console.log("-- query_fast result from sheet")              
             }
-        }            
-        return null;            
+        }
+        if ( curRowArr )
+          return curRowArr;
+        else
+          return null;            
     }
     //---------------------------------------------------------     
     update_fast(field_name,field_value,update_field_name,update_field_value)
@@ -144,7 +173,8 @@ class gsDB
               this.sheet.getRange(i,update_col_index).setValue(update_field_value)
               return true;              
             }
-        }            
+        }     
+        this.cache = {};        
         return false;      
     }
     //---------------------------------------------------------     
@@ -175,7 +205,14 @@ class gsDB
                     }                    
                 }
             }
-        }                  
+        } 
+        this.cache = {};                  
+    }
+    //---------------------------------------------------------
+    flush()
+    {      
+      SpreadsheetApp.flush();
+      this.cache = {}; 
     }
     //---------------------------------------------------------
 }
