@@ -18,6 +18,8 @@ success = gsdb.add(random_row);
 
 // queries : no need for FROM, please remember to add DATE' for dates casting.
 rows = gsdb.query("select date_time,bool,string,number where (string like '%str_1%')");
+
+// usage of local cache makes query much faster ...
 rows = gsdb.query_fast("number",value)
 
 // update rows
