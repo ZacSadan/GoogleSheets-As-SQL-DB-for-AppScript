@@ -2,7 +2,7 @@
 AppScript library for querying Google Sheets as an SQL Database
 
 ```
-// first line contains columns names : date_time,bool,string,number
+// first line needs to contains columns names. e.g. date_time,bool,string,number
 // be sure to declare date_time column as "Date time" in Google Sheet "Format->Number" menu
     
 // parameters to function are spreadsheetId,sheetName
