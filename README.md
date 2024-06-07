@@ -16,10 +16,11 @@ const random_row = {};
           random_row.number    = Math.floor(Math.random() * (10001)); 
 success = gsdb.add(random_row);
 
-// queries : no need for FROM, please remember to add DATE' for dates casting.
+// queries : no need for FROM, please remember to add DATE'/DATETIME' for date/datetime casting if needed.
+// Support full SQL Syntax.
 rows = gsdb.query("select date_time,bool,string,number where (string like '%str_1%')");
 
-// usage of local cache makes query much faster ...
+// usage of local cache makes QUERY much faster ...
 rows = gsdb.query_fast("number",value)
 
 // update rows
