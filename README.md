@@ -1,4 +1,4 @@
-# GoogleSheetsSqlDB
+# GoogleSheets-As-SQL-DB-for-AppScript
 AppScript library for querying Google Sheets as an SQL Database
 
 ```
