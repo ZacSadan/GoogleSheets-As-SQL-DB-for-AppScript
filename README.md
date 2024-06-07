@@ -3,9 +3,9 @@ AppScript library for querying Google Sheets as an SQL Database
 
 ```
 // first line contains columns names : date_time,bool,string,number
-// be sure to decalate date_time column as "Date time" in Google Sheet "Format->Number" menu
+// be sure to declare date_time column as "Date time" in Google Sheet "Format->Number" menu
     
-// paramters to function are spreadsheetId,sheetName
+// parameters to function are spreadsheetId,sheetName
 const gsdb = new gsDB("1lMUATEiSoTkpod1UgPfQdqcqiR8jtQh5slAH3ME","gsDB_test");
 
 const random_row = {};
