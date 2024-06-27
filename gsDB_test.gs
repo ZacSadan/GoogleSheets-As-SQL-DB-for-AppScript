@@ -4,7 +4,7 @@ function test_gsDB()
     // be sure to decalate date_time column as "Date time" in Google Sheet "Format->Number" menu
     
     // paramters to function are spreadsheetId,sheetName
-    const gsdb = new gsDB("1lMUATEiSoTkpod1UgPfQdqcqiR8jtQh5slAH3MEs","gsDB_test");
+    const gsdb = new gsDB("1lMUATEiSoTkpod1UgPfQdqcqiR8jtQh5slAH3MEsKMA","gsDB_test");
 
     // remove all previous entries
     success = gsdb.truncate(); 
