@@ -4,7 +4,7 @@ function test_gsDB()
     // be sure to decalate date_time column as "Date time" in Google Sheet "Format->Number" menu
     
     // paramters to function are spreadsheetId,sheetName
-    const gsdb = new gsDB("1lMUATEiSoTkpod1UgPfQdqcqiR8jtQh5slAH3MEsK","gsDB_test");
+    const gsdb = new gsDB("1lMUATEiSoTkpod1UgPfQdqcqiR8jtQh5slAH3MEsKMA","gsDB_test");
 
     // remove all previous entries
     success = gsdb.truncate(); 
@@ -54,6 +54,7 @@ function test_gsDB()
         details_for_updating_matched_rows.date_time = date ;
         details_for_updating_matched_rows.string    = "str_updated"+ Math.floor(Math.random() * (100001));        
     
+    gsdb.clearCacheOnUpdates = false ;
     success = gsdb.update(details_for_updating_matched_rows,"where (number > 7000)");
     
     success = gsdb.update_fast("number",rand_value,"string","str_updated_by_update_fast");
