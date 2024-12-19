@@ -1,5 +1,5 @@
 class gsDB 
-{        
+{            
     //---------------------------------------------------------
     constructor(spreadId,sheetName)
     {     
@@ -11,6 +11,7 @@ class gsDB
       this.sheetName = sheetName;
       this.colNames = [];
       this.cache = {}; // cache for fast queries
+      this.clearCacheOnUpdates = true;
       
       // first line contains the table columns names
       for (var i = 1; i <= this.MAX_NUM_COLS; i++) 
@@ -26,23 +27,7 @@ class gsDB
     //---------------------------------------------------------  
     getNumOfActiveRows()
     {
-      var found_row_with_data = 0;
-      for (var i = 2; i <= this.MAX_NUM_ROWS; i++) 
-      { 
-          found_row_with_data = 0;
-          for (var j = 1; j <= this.colNames.length; j++) 
-          { 
-               var value = this.sheet.getRange(i,j).getValue().toString().trim();                  
-               if( value.length > 0  ) // any data
-               {
-                  found_row_with_data = 1 ;                  
-               }
-          }  
-          if ( found_row_with_data == 0 )
-          {
-            return i-1;            
-          }            
-      }
+       return this.sheet.getLastRow();
     }   
     //---------------------------------------------------------
     truncate()
@@ -55,13 +40,20 @@ class gsDB
               this.sheet.getRange(i,j).setValue("")
           }
       }
-      this.cache = {}; 
+      if(this.clearCacheOnUpdates)
+      {
+          this.cache = {}; 
+          console.log("truncate:clearCache")
+      }
       return true;
     }
     //---------------------------------------------------------
     add(row)
     {
+      //console.log("add(row) function : before this.getNumOfActiveRows() + 1 ");
       var nextRowNum = this.getNumOfActiveRows() + 1 ;      
+      //console.log("add(row) function : after this.getNumOfActiveRows() + 1 ");
+
       var colName = ""; var newValue = "";      
       for ( var i = 0 ; i < this.colNames.length ; i ++)
       {
@@ -69,7 +61,11 @@ class gsDB
           newValue = row[colName];          
           this.sheet.getRange(nextRowNum,i+1).setValue(newValue)
       }
-      this.cache = {}; 
+      if(this.clearCacheOnUpdates)
+      {
+          this.cache = {}; 
+          console.log("add(row):clearCache")
+      }
       return true;
     }
     //---------------------------------------------------------
@@ -82,6 +78,7 @@ class gsDB
               query_str = query_str.replace( regex , "Col"+(i+1) )
           }          
           //console.log(query_str);
+          
           // very ugly and danger ...
           var sheet = this.spreadsheet.insertSheet();
           var r = sheet.getRange(1, 1).setFormula(query_str);
@@ -173,8 +170,12 @@ class gsDB
               this.sheet.getRange(i,update_col_index).setValue(update_field_value)
               return true;              
             }
-        }     
-        this.cache = {};        
+        }  
+        if(this.clearCacheOnUpdates)
+        {   
+            this.cache = {};
+            console.log("update_fast:clearCache")
+        }        
         return false;      
     }
     //---------------------------------------------------------     
@@ -206,13 +207,23 @@ class gsDB
                 }
             }
         } 
-        this.cache = {};                  
+        
+        if(this.clearCacheOnUpdates)
+        {   
+            this.cache = {};
+            console.log("update:clearCache")
+        }
     }
     //---------------------------------------------------------
     flush()
     {      
       SpreadsheetApp.flush();
-      this.cache = {}; 
+
+      if(this.clearCacheOnUpdates)
+      {   
+          this.cache = {};
+          console.log("flush:clearCache")
+      } 
     }
     //---------------------------------------------------------
 }
